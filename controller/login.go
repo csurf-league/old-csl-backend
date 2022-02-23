@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/robyzzz/csl-backend/utils/env"
-	"github.com/robyzzz/csl-backend/utils/store"
+	"github.com/robyzzz/csl-backend/config"
 	"github.com/solovev/steam_go"
 )
 
@@ -22,12 +21,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		// login success
 
 		// get user
-		user, err := opId.ValidateAndGetUser(env.STEAM_API_KEY)
+		user, err := opId.ValidateAndGetUser(config.STEAM_API_KEY)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
-		store.CreateSessionID(w, r, user.SteamId)
+		config.CreateSessionID(w, r, user.SteamId)
 
 		// TODO: store user info in database
 

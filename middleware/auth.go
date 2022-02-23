@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/robyzzz/csl-backend/utils/store"
+	"github.com/robyzzz/csl-backend/config"
 )
 
 // Authentication middleware called on routes that need to know if user is logged in.
@@ -12,7 +12,7 @@ import (
 func IsAuthenticated(h func(w http.ResponseWriter, r *http.Request)) http.Handler {
 	next := http.HandlerFunc(h)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if store.SessionAlreadyExists(r) {
+		if config.SessionAlreadyExists(r) {
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}

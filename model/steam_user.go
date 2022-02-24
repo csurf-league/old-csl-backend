@@ -27,7 +27,7 @@ func CreateSteamUser(user SteamUser) error {
 	}
 
 	if userExists {
-		return nil
+		return UpdateSteamUser(user)
 	}
 
 	query := `INSERT INTO steam_user(steamid, personaname, lastlogoff, profileurl, avatar, avatarmedium, avatarfull, realname, primaryclanid, timecreated, loccountrycode, gameid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`

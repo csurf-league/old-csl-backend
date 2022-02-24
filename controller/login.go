@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/robyzzz/csl-backend/config"
+	"github.com/robyzzz/csl-backend/utils"
 	"github.com/solovev/steam_go"
 )
 
@@ -21,12 +22,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		// login success
 		user, err := opId.ValidateAndGetUser(config.STEAM_API_KEY)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			utils.APIErrorRespond(w, utils.ErrorResponse{http.StatusInternalServerError, err.Error()})
 			return
 		}
 
 		if err = CreateSteamUser(user); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			utils.APIErrorRespond(w, utils.ErrorResponse{http.StatusInternalServerError, err.Error()})
 			return
 		}
 

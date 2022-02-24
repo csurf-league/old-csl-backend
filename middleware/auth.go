@@ -5,26 +5,19 @@ import (
 
 	"github.com/robyzzz/csl-backend/config"
 	"github.com/robyzzz/csl-backend/controller"
-	"github.com/robyzzz/csl-backend/utils"
 )
 
-// Authentication middleware called on routes that need to know if user is logged in.
-// Returns to root page if session already exists.
-// i.e usage: /login
-func IsAuthenticated(h func(w http.ResponseWriter, r *http.Request)) http.Handler {
+// Used to update steam user data when acessing a route or to let them log in
+// If user is already logged in, we update, else we redirect to login page
+// Usage: /login
+func IsLogged(h func(w http.ResponseWriter, r *http.Request)) http.Handler {
 	next := http.HandlerFunc(h)
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if config.SessionAlreadyExists(r) {
-			err := controller.UpdateSteamUser(config.GetSessionID(r))
-			if err != nil {
-				utils.APIErrorRespond(w, utils.ErrorResponse{http.StatusInternalServerError, err.Error()})
-				return
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			if config.SessionAlreadyExists(r) {
+				controller.UpdateSteamUser(w, r)
+			} else {
+				next.ServeHTTP(w, r)
 			}
-
-			http.Redirect(w, r, "/", http.StatusFound)
-			return
-		}
-
-		next.ServeHTTP(w, r)
-	})
+		})
 }

@@ -8,14 +8,14 @@ import (
 	"github.com/robyzzz/csl-backend/config"
 	"github.com/robyzzz/csl-backend/controller"
 	"github.com/robyzzz/csl-backend/middleware"
-	"github.com/robyzzz/csl-backend/utils"
+	"github.com/robyzzz/csl-backend/model"
 )
 
 var router *mux.Router
 
 func main() {
 	config.GetEnvVariables()
-	//model.Connect()
+	model.Connect()
 
 	setupRouter()
 
@@ -26,11 +26,12 @@ func main() {
 func setupRouter() {
 	router = mux.NewRouter()
 	router.HandleFunc("/", controller.Home)
-	router.HandleFunc("/test", test)
-	router.Handle("/login", middleware.IsAuthenticated(controller.Login))
+	router.Handle("/login", middleware.IsLogged(controller.Login))
 	router.HandleFunc("/logout", controller.Logout)
-}
 
-func test(w http.ResponseWriter, r *http.Request) {
-	utils.APIErrorRespond(w, utils.ErrorResponse{Code: http.StatusOK, ErrorMsg: "welcome"})
+	// steam user
+	router.HandleFunc("/api/player/{steamid}", controller.GetSteamUser).Methods("GET")
+
+	// player stats
+	router.HandleFunc("/api/playerstats/{steamid}", controller.GetPlayerStats).Methods("GET")
 }

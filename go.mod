@@ -11,4 +11,7 @@ require (
 
 )
 
-require github.com/gorilla/securecookie v1.1.1 // indirect
+require (
+	github.com/gorilla/securecookie v1.1.1 // indirect
+	github.com/jmoiron/sqlx v1.3.4 // indirect
+)

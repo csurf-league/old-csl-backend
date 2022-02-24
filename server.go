@@ -27,4 +27,5 @@ func setupRouter() {
 	router = mux.NewRouter()
 	router.HandleFunc("/", controller.Home)
 	router.Handle("/login", middleware.IsAuthenticated(controller.Login))
+	router.HandleFunc("/logout", controller.Logout)
 }

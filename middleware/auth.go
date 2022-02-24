@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/robyzzz/csl-backend/config"
+	"github.com/robyzzz/csl-backend/controller"
 )
 
 // Authentication middleware called on routes that need to know if user is logged in.
@@ -13,6 +14,13 @@ func IsAuthenticated(h func(w http.ResponseWriter, r *http.Request)) http.Handle
 	next := http.HandlerFunc(h)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if config.SessionAlreadyExists(r) {
+			err := controller.UpdateSteamUser(config.GetSessionID(r))
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte(err.Error()))
+				return
+			}
+
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}

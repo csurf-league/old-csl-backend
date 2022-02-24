@@ -19,18 +19,24 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, opId.AuthUrl(), http.StatusTemporaryRedirect)
 	default:
 		// login success
-
-		// get user
 		user, err := opId.ValidateAndGetUser(config.STEAM_API_KEY)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if err = CreateSteamUser(user); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		config.CreateSessionID(w, r, user.SteamId)
-
-		// TODO: store user info in database
-
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(user)
 	}
+}
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+	config.RemoveSessionID(w, r)
+	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 }

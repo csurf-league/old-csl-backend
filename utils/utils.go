@@ -14,11 +14,9 @@ type ErrorResponse struct {
 	ErrorMsg string
 }
 
+// ErrorResponse "constructor"
 func NewAPIError(c int, m string) ErrorResponse {
-	return ErrorResponse{
-		Code:     c,
-		ErrorMsg: m,
-	}
+	return ErrorResponse{Code: c, ErrorMsg: m}
 }
 
 // Error response in JSON format

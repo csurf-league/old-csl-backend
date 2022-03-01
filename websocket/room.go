@@ -9,11 +9,12 @@ import (
 
 // Room represents a single chat room
 type Room struct {
-	id      uint
-	clients map[*Client]bool
-	forward chan []byte
-	join    chan *Client
-	leave   chan *Client
+	id         int
+	maxplayers int
+	clients    map[*Client]bool
+	forward    chan []byte
+	join       chan *Client
+	leave      chan *Client
 }
 
 const (
@@ -25,19 +26,20 @@ var upgrader = &websocket.Upgrader{
 	ReadBufferSize:  socketBufferSize,
 	WriteBufferSize: socketBufferSize,
 	CheckOrigin: func(r *http.Request) bool {
-		// TODO: change origin to frontend
+		// TODO: change origin to frontend url
 		return true
 	},
 }
 
 // Create a new chat room
-func NewRoom(id uint) *Room {
+func NewRoom(id int, maxplayers int) *Room {
 	return &Room{
-		id:      id,
-		clients: make(map[*Client]bool),
-		forward: make(chan []byte),
-		join:    make(chan *Client),
-		leave:   make(chan *Client),
+		id:         id,
+		maxplayers: maxplayers,
+		clients:    make(map[*Client]bool),
+		forward:    make(chan []byte),
+		join:       make(chan *Client),
+		leave:      make(chan *Client),
 	}
 }
 
@@ -72,16 +74,21 @@ func (r *Room) leaveRoom(c *Client) {
 // Print message to all in the current room
 func (r *Room) printToChatAll(msg []byte) {
 	data := FromJSON(msg)
-	log.Printf("[room %v] %v: %v", r.id, data.Sender, data.Message)
+	log.Printf("[room %v] %v: %v", r.id, data.Sender, data)
 
 	for client := range r.clients {
 		select {
 		case client.send <- msg:
-			log.Println("client.send <- msg")
+			// success
 		default:
-			// not sure if this is possible
+			// not sure if this is possible/reachable but yeah
 			delete(r.clients, client)
 			close(client.send)
 		}
 	}
+}
+
+// Returns true if room is full
+func (room *Room) IsFull() bool {
+	return len(room.clients) == room.maxplayers
 }

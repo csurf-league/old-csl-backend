@@ -1,12 +1,21 @@
 package websocket
 
-import "net/http"
+import (
+	"net/http"
+)
 
 // /api/rooms/{room_id} - create a client websocket, associating it with a room
 func (room *Room) HandleWebsocket(w http.ResponseWriter, r *http.Request) {
+	// check if room is full
+	if room.IsFull() {
+		// TODO: return error
+		return
+	}
+
 	// create client socket
 	socket, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
+		// TODO: return error
 		return
 	}
 
@@ -16,7 +25,7 @@ func (room *Room) HandleWebsocket(w http.ResponseWriter, r *http.Request) {
 	// join the room
 	room.join <- client
 
-	// executed at end of this function (after goroutines stop)
+	// executed at end of this fn
 	defer func() {
 		room.leave <- client
 	}()

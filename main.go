@@ -39,8 +39,8 @@ func setupRouter() {
 	router.HandleFunc("/api/playerstats/{steamid}", controller.GetPlayerStats).Methods("GET")
 
 	// create rooms and run them (TODO: database rooms integration)
-	for _, uid := range []uint{1, 2, 3, 4, 5} {
-		newRoom := websocket.NewRoom(uid)
+	for _, uid := range []int{1, 2, 3, 4, 5} {
+		newRoom := websocket.NewRoom(uid, 2)
 		roomRoute := fmt.Sprintf("/chat/%d", uid)
 		router.HandleFunc(roomRoute, newRoom.HandleWebsocket)
 		go newRoom.Run()

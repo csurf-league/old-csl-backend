@@ -1,8 +1,6 @@
 package websocket
 
-import (
-	"encoding/json"
-)
+import "encoding/json"
 
 // Message represents a chat message
 type Message struct {
@@ -11,8 +9,8 @@ type Message struct {
 	Created string `json:"created"`
 }
 
-// FromJSON created a new Message struct from given JSON
-func FromJSON(jsonInput []byte) (message *Message) {
-	json.Unmarshal(jsonInput, &message)
-	return
+// FromJSON creates a new Message struct from given JSON
+func FromJSON(jsonData []byte) (message *Message) {
+	json.Unmarshal(jsonData, &message)
+	return message
 }

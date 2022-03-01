@@ -2,6 +2,7 @@ package websocket
 
 import "github.com/gorilla/websocket"
 
+// Client represents a... client
 type Client struct {
 	socket *websocket.Conn
 	room   *Room

@@ -9,10 +9,12 @@ import (
 	"github.com/robyzzz/csl-backend/controller"
 	"github.com/robyzzz/csl-backend/middleware"
 	"github.com/robyzzz/csl-backend/model"
+	"github.com/robyzzz/csl-backend/websocket"
 )
 
 var router *mux.Router
 
+// start server
 func main() {
 	config.GetEnvVariables()
 	model.Connect()
@@ -34,4 +36,12 @@ func setupRouter() {
 
 	// player stats
 	router.HandleFunc("/api/playerstats/{steamid}", controller.GetPlayerStats).Methods("GET")
+
+	//
+	websocket.WS = websocket.NewWebsocketServer()
+	go websocket.WS.Run()
+
+	log.Println("oia")
+
+	router.HandleFunc("/ws", websocket.ServeWs)
 }

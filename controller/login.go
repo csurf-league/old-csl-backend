@@ -22,12 +22,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		// login success
 		user, err := opId.ValidateAndGetUser(config.STEAM_API_KEY)
 		if err != nil {
-			utils.APIErrorRespond(w, utils.ErrorResponse{http.StatusInternalServerError, err.Error()})
+			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, err.Error()))
 			return
 		}
 
 		if err = CreateSteamUser(user); err != nil {
-			utils.APIErrorRespond(w, utils.ErrorResponse{http.StatusInternalServerError, err.Error()})
+			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, err.Error()))
 			return
 		}
 

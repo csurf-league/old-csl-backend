@@ -18,7 +18,7 @@ func GetSteamUser(w http.ResponseWriter, r *http.Request) {
 
 	player, err := model.GetSteamUser(mux.Vars(r)["steamid"])
 	if err != nil {
-		utils.APIErrorRespond(w, utils.ErrorResponse{Code: http.StatusNotFound, ErrorMsg: err.Error()})
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, err.Error()))
 		return
 	}
 
@@ -39,13 +39,13 @@ func UpdateSteamUser(w http.ResponseWriter, r *http.Request) {
 
 	exists, err := model.DoesSteamUserExist(steamID)
 	if err != nil {
-		utils.APIErrorRespond(w, utils.ErrorResponse{Code: http.StatusInternalServerError, ErrorMsg: err.Error()})
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
 	updatedUser, err := steam_go.GetPlayerSummaries(steamID, config.STEAM_API_KEY)
 	if err != nil {
-		utils.APIErrorRespond(w, utils.ErrorResponse{Code: http.StatusInternalServerError, ErrorMsg: err.Error()})
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
@@ -58,7 +58,7 @@ func UpdateSteamUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if result != nil {
-		utils.APIErrorRespond(w, utils.ErrorResponse{Code: http.StatusInternalServerError, ErrorMsg: err.Error()})
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, err.Error()))
 		return
 	}
 

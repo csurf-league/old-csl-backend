@@ -14,6 +14,13 @@ type ErrorResponse struct {
 	ErrorMsg string
 }
 
+func NewAPIError(c int, m string) ErrorResponse {
+	return ErrorResponse{
+		Code:     c,
+		ErrorMsg: m,
+	}
+}
+
 // Error response in JSON format
 func APIErrorRespond(w http.ResponseWriter, res ErrorResponse) {
 	w.Header().Set("Content-Type", "application/json")

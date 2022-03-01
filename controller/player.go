@@ -15,7 +15,7 @@ func GetPlayerStats(w http.ResponseWriter, r *http.Request) {
 
 	player, err := model.GetPlayerStats(mux.Vars(r)["steamid"])
 	if err != nil {
-		utils.APIErrorRespond(w, utils.ErrorResponse{Code: http.StatusNotFound, ErrorMsg: err.Error()})
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, err.Error()))
 		return
 	}
 

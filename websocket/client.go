@@ -4,8 +4,17 @@ import "github.com/gorilla/websocket"
 
 type Client struct {
 	socket *websocket.Conn
-	send   chan []byte
 	room   *Room
+	send   chan []byte
+}
+
+// Create new client
+func newClient(s *websocket.Conn, r *Room) *Client {
+	return &Client{
+		socket: s,
+		room:   r,
+		send:   make(chan []byte, messageBufferSize),
+	}
 }
 
 // Read client messages (from frontend)

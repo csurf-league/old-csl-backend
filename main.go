@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -37,11 +38,11 @@ func setupRouter() {
 	// player stats
 	router.HandleFunc("/api/playerstats/{steamid}", controller.GetPlayerStats).Methods("GET")
 
-	//
-	websocket.WS = websocket.NewWebsocketServer()
-	go websocket.WS.Run()
-
-	log.Println("oia")
-
-	router.HandleFunc("/ws", websocket.ServeWs)
+	// create rooms and run them (TODO: database integration)
+	for _, uid := range []uint{1, 2, 3, 4, 5} {
+		newRoom := websocket.NewRoom(uid)
+		roomRoute := fmt.Sprintf("/chat/%d", uid)
+		router.HandleFunc(roomRoute, newRoom.ServeHTTP)
+		go newRoom.Run()
+	}
 }

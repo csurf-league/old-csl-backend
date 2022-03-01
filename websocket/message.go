@@ -2,25 +2,17 @@ package websocket
 
 import (
 	"encoding/json"
-	"log"
 )
 
-const SendMessageAction = "send-message"
-const JoinRoomAction = "join-room"
-const LeaveRoomAction = "leave-room"
-
+// Message represents a chat message
 type Message struct {
-	Action  string  `json:"action"`
-	Message string  `json:"message"`
-	Target  string  `json:"target"`
-	Sender  *Client `json:"sender"`
+	Message string `json:"message"`
+	Sender  string `json:"sender"`
+	Created string `json:"created"`
 }
 
-func (message *Message) encode() []byte {
-	json, err := json.Marshal(message)
-	if err != nil {
-		log.Println(err)
-	}
-
-	return json
+// FromJSON created a new Message struct from given JSON
+func FromJSON(jsonInput []byte) (message *Message) {
+	json.Unmarshal(jsonInput, &message)
+	return
 }

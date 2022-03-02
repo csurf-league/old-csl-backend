@@ -50,13 +50,13 @@ func (r *Room) Run() {
 
 // Client joins the room
 func (r *Room) joinRoom(c *Client) {
-	log.Printf("new client in room %v", r.ID)
+	log.Printf("new client (%v) in room %v", c.SteamID, r.ID)
 	r.Clients = append(r.Clients, c)
 }
 
 // Client leaves the room
 func (r *Room) leaveRoom(c *Client) {
-	log.Printf("client leaving room %v", r.ID)
+	log.Printf("client (%v) leaving room %v", c.SteamID, r.ID)
 	r.Clients = removeClient(r.Clients, c.GetIndex(r.Clients))
 	close(c.send)
 

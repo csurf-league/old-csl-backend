@@ -4,6 +4,7 @@ import "encoding/json"
 
 // Message represents a chat message
 type Message struct {
+	Action  string `json:"action"`
 	Message string `json:"message"`
 	Sender  string `json:"sender"`
 	Created string `json:"created"`

@@ -16,9 +16,9 @@ type Client struct {
 }
 
 // Create new client
-func newClient(steamID string, s *websocket.Conn, r *Room) *Client {
+func newClient(steamid string, s *websocket.Conn, r *Room) *Client {
 	return &Client{
-		SteamID: steamID,
+		SteamID: steamid,
 		socket:  s,
 		room:    r,
 		send:    make(chan []byte, messageBufferSize),

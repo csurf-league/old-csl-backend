@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -43,38 +44,34 @@ func (r *Room) Run() {
 			r.leaveRoom(client)
 
 		case msg := <-r.forward:
-			r.printToChatAll(msg)
+			r.broadcastToAll(msg)
 		}
 	}
 }
 
 // Client joins the room
 func (r *Room) joinRoom(c *Client) {
-	log.Printf("new client (%v) in room %v", c.SteamID, r.ID)
+	msg := NewMessage("join-room", fmt.Sprintf("%s has joined the room", c.SteamID), c.SteamID, "").ToJSON()
+	r.broadcastToAll(msg)
 	r.Clients = append(r.Clients, c)
 }
 
 // Client leaves the room
 func (r *Room) leaveRoom(c *Client) {
-	log.Printf("client (%v) leaving room %v", c.SteamID, r.ID)
-	r.Clients = removeClient(r.Clients, c.GetIndex(r.Clients))
-	close(c.send)
-
+	msg := NewMessage("left-room", fmt.Sprintf("%s has left the room", c.SteamID), c.SteamID, "").ToJSON()
+	r.broadcastToAll(msg)
+	c.DeleteFromRoom(r)
 }
 
-// Print message to all in the current room
-func (r *Room) printToChatAll(msg []byte) {
-	data := FromJSON(msg)
-	log.Printf("[room %v] %v: %v", r.ID, data.Sender, data)
-
+// Sends a message to all clients connected to the room socket
+func (r *Room) broadcastToAll(msg []byte) {
 	for _, client := range r.Clients {
 		select {
 		case client.send <- msg:
 			// success
 		default:
 			// not sure if this is possible/reachable but yeah
-			r.Clients = removeClient(r.Clients, client.GetIndex(r.Clients))
-			close(client.send)
+			client.DeleteFromRoom(r)
 		}
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/robyzzz/csl-backend/utils"
 )
 
 type RoomsHub struct {
@@ -71,23 +72,25 @@ func reader(conn *websocket.Conn) {
 
 // /api/rooms/{room_id} - create a client websocket, putting him in this room
 func (room *Room) HandleRoom(w http.ResponseWriter, r *http.Request) {
+	// TODO: check if client is not on another room
+
 	if room.IsFull() {
-		// TODO: return error
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusBadRequest, "Room is full"))
 		return
 	}
 
-	// get steamid by url param
+	// get steamid by url param TODO: change this to bearer auth?
 	steamid := r.URL.Query().Get("steamid")
 	if len(steamid) == 0 {
 		log.Println("no steamid")
-		// TODO: return error and check for invalid steamid
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, "Invalid steamid"))
 		return
 	}
 
 	// create client socket
 	socket, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		// TODO: return error
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, "Something went wrong..."))
 		return
 	}
 

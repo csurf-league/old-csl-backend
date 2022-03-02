@@ -1,8 +1,6 @@
 package websocket
 
 import (
-	"log"
-
 	"github.com/gorilla/websocket"
 )
 
@@ -23,6 +21,14 @@ func newClient(steamid string, s *websocket.Conn, r *Room) *Client {
 		room:    r,
 		send:    make(chan []byte, messageBufferSize),
 	}
+}
+
+// Removes a client from the room
+func (c *Client) DeleteFromRoom(r *Room) {
+	r.Clients = removeClient(r.Clients, c.GetIndex(r.Clients))
+	close(c.send)
+	c.socket.Close()
+	c.room = nil
 }
 
 // Removes a client from slice by its index
@@ -46,7 +52,6 @@ func (c *Client) read() {
 // Send message to client (to frontend)
 func (c *Client) write() {
 	for msg := range c.send {
-		log.Println(string(msg))
 		if err := c.socket.WriteMessage(websocket.TextMessage, msg); err != nil {
 			break
 		}

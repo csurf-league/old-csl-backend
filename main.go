@@ -29,8 +29,8 @@ func main() {
 func setupRouter() {
 	router = mux.NewRouter()
 	router.HandleFunc("/", controller.Home)
-	router.Handle("/login", middleware.IsLogged(controller.Login))
 	router.HandleFunc("/logout", controller.Logout)
+	router.Handle("/login", middleware.IsLogged(controller.Login))
 
 	// steam user
 	router.HandleFunc("/api/player/{steamid}", controller.GetSteamUser).Methods("GET")
@@ -38,11 +38,15 @@ func setupRouter() {
 	// player stats
 	router.HandleFunc("/api/playerstats/{steamid}", controller.GetPlayerStats).Methods("GET")
 
-	// create rooms and run them (TODO: database rooms integration)
+	// create rooms and run them (TODO: no hardcode range)
+	websocket.Lobby = &websocket.RoomsHub{}
 	for _, uid := range []int{1, 2, 3, 4, 5} {
 		newRoom := websocket.NewRoom(uid, 2)
-		roomRoute := fmt.Sprintf("/chat/%d", uid)
-		router.HandleFunc(roomRoute, newRoom.HandleWebsocket)
+		websocket.AddRoomToHub(newRoom)
+		router.HandleFunc("/api/room/"+fmt.Sprint(uid), newRoom.HandleRoom)
 		go newRoom.Run()
 	}
+
+	router.HandleFunc("/api/rooms", websocket.RoomsWebsocket)
+
 }

@@ -20,14 +20,17 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, opId.AuthUrl(), http.StatusTemporaryRedirect)
 	default:
 		// login success
+
+		w.Header().Set("Content-Type", "application/json")
+
 		user, err := opId.ValidateAndGetUser(config.STEAM_API_KEY)
 		if err != nil {
-			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, err.Error()))
+			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, "ValidateAndGetUser:"+err.Error()))
 			return
 		}
 
 		if err = CreateSteamUser(user); err != nil {
-			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, err.Error()))
+			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, "CreateSteamUser:"+err.Error()))
 			return
 		}
 

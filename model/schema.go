@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS "steam_user" (
 	"primaryclanid" TEXT,
 	"timecreated" INTEGER,
 	"loccountrycode" TEXT,
-	"gameid" INTEGER,
 	"created_at" TIMESTAMP,
 	"updated_at" TIMESTAMP DEFAULT NOW()
 );
@@ -61,8 +60,8 @@ ALTER TABLE "player_stats"
 
 
 INSERT INTO steam_user(steamid, personaname, lastlogoff, profileurl, avatar, avatarmedium, 
-	avatarfull, realname, primaryclanid, timecreated, loccountrycode, gameid, created_at) 
-	VALUES ('steamid','bozo',123,'kkk','a', 'b', 'c', 'yes', '13', 123, 'dd', 123, NOW());
+	avatarfull, realname, primaryclanid, timecreated, loccountrycode, created_at) 
+	VALUES ('steamid','bozo',123,'kkk','a', 'b', 'c', 'yes', '13', 123, 'dd', NOW());
 
 INSERT INTO map(name) VALUES ('xdream');
 

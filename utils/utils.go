@@ -42,6 +42,5 @@ func PlayerSummariesToSteamUser(user *steam_go.PlayerSummaries) model.SteamUser 
 		PrimaryClanID:  user.PrimaryClanId,
 		TimeCreated:    user.TimeCreated,
 		LocCountryCode: user.LocCountryCode,
-		GameID:         user.GameId,
 	}
 }

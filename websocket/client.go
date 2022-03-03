@@ -23,28 +23,18 @@ func newClient(steamid string, s *websocket.Conn, r *Room) *Client {
 	}
 }
 
-// Removes a client from the room
-func (c *Client) DeleteFromRoom(r *Room) {
-	r.Clients = removeClient(r.Clients, c.GetIndex(r.Clients))
-	close(c.send)
-	c.socket.Close()
-	c.room = nil
-}
-
-// Removes a client from slice by its index
-func removeClient(s []*Client, i int) []*Client {
-	s[i] = s[len(s)-1]
-	return s[:len(s)-1]
-}
-
-// Read client messages (from frontend)
-func (c *Client) read() {
+// Read client messages (from frontend (either from current room or hub))
+func (c *Client) read(fromHub bool) {
 	for {
 		_, msg, err := c.socket.ReadMessage()
 		if err != nil {
 			break
 		}
-		c.room.forward <- msg
+		if fromHub {
+			Hub.forward <- msg
+		} else {
+			c.room.forward <- msg
+		}
 	}
 	c.socket.Close()
 }
@@ -57,6 +47,27 @@ func (c *Client) write() {
 		}
 	}
 	c.socket.Close()
+}
+
+// Removes a client from the room
+func (c *Client) DeleteFromRoom(r *Room) {
+	r.Clients = removeClient(r.Clients, c.GetIndex(r.Clients))
+	close(c.send)
+	c.socket.Close()
+	c.room = nil
+}
+
+// Removes a client from the hub
+func (c *Client) DeleteFromHub() {
+	Hub.Clients = removeClient(Hub.Clients, c.GetIndex(Hub.Clients))
+	close(c.send)
+	c.socket.Close()
+}
+
+// Removes a client from slice by its index
+func removeClient(s []*Client, i int) []*Client {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
 }
 
 // Returns client index on the slice

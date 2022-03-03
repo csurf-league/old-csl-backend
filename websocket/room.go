@@ -27,11 +27,6 @@ func NewRoom(id int, maxplayers int) *Room {
 	}
 }
 
-// Add room to hub
-func AddRoomToHub(r *Room) {
-	Lobby.Rooms = append(Lobby.Rooms, r)
-}
-
 // Run chat room and wait for actions
 func (r *Room) Run() {
 	log.Printf("running chat room %d", r.ID)

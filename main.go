@@ -38,15 +38,17 @@ func setupRouter() {
 	// player stats
 	router.HandleFunc("/api/playerstats/{steamid}", controller.GetPlayerStats).Methods("GET")
 
-	// create rooms and run them (TODO: no hardcode range)
-	websocket.Lobby = &websocket.RoomsHub{}
+	// hub/lobby
+	websocket.Hub = websocket.NewHub()
+	go websocket.RunHub()
+	router.HandleFunc("/api/rooms", websocket.HandleHub)
+
+	// rooms (TODO: no hardcode range)
 	for _, uid := range []int{1, 2, 3, 4, 5} {
 		newRoom := websocket.NewRoom(uid, 3)
 		websocket.AddRoomToHub(newRoom)
 		router.HandleFunc("/api/room/"+fmt.Sprint(uid), newRoom.HandleRoom)
 		go newRoom.Run()
 	}
-
-	router.HandleFunc("/api/rooms", websocket.RoomsWebsocket)
 
 }

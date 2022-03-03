@@ -59,6 +59,43 @@ func removeClientFromHub(c *Client) {
 	hubBroadcastToAll(msg)
 }
 
+// Depending on the action, send a response back to client (frontend)
+func handleHubMessage(msg []byte) {
+	data := FromJSON(msg)
+	var response []byte
+
+	// TODO: find a better way for this type of communication (especially join and left room updates)
+	// possible solution: just send who joined/left and pop him from room players array
+	switch data.Action {
+	// when someone joins/leaves a room, we need to update hub view rooms
+	case "join-room", "left-room":
+		response = GetRoomsJSON()
+
+	case "hub-msg":
+		response = msg
+	}
+
+	hubBroadcastToAll(response)
+}
+
+// Sends a hub message to a single client
+func (c *Client) hubBroadcastToClient(msg []byte) {
+	select {
+	case c.send <- msg:
+		// success
+	default:
+		// not sure if this is possible/reachable but yeah
+		c.DeleteFromHub()
+	}
+}
+
+// Send message to all from current hub
+func hubBroadcastToAll(msg []byte) {
+	for _, client := range Hub.Clients {
+		client.hubBroadcastToClient(msg)
+	}
+}
+
 // Returns current rooms info
 func GetRoomsJSON() []byte {
 	data := struct {
@@ -89,39 +126,6 @@ func GetHubPlayersJSON() []byte {
 		log.Println(err.Error())
 	}
 	return response
-}
-
-// Depending on the action, send a response back to client (frontend)
-func handleHubMessage(msg []byte) {
-	data := FromJSON(msg)
-	var response []byte
-
-	// TODO: find a better way for this type of communication (especially join and left room updates)
-	switch data.Action {
-	// update rooms:
-	case "join-room", "left-room":
-		response = GetRoomsJSON()
-	}
-
-	hubBroadcastToAll(response)
-}
-
-// Send message to all from current hub
-func hubBroadcastToAll(msg []byte) {
-	for _, client := range Hub.Clients {
-		client.hubBroadcastToClient(msg)
-	}
-}
-
-// Sends a hub message to a single client
-func (c *Client) hubBroadcastToClient(msg []byte) {
-	select {
-	case c.send <- msg:
-		// success
-	default:
-		// not sure if this is possible/reachable but yeah
-		c.DeleteFromHub()
-	}
 }
 
 // Add room to hub

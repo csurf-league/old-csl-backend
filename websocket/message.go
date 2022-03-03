@@ -1,6 +1,9 @@
 package websocket
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"log"
+)
 
 // Message represents a chat message
 type Message struct {
@@ -22,12 +25,18 @@ func NewMessage(a string, m string, s string, c string) *Message {
 
 // Converts a message to JSON
 func (msg *Message) ToJSON() []byte {
-	j, _ := json.Marshal(msg)
+	j, err := json.Marshal(msg)
+	if err != nil {
+		log.Println(err.Error())
+	}
 	return j
 }
 
 // FromJSON creates a new Message struct from given JSON
 func FromJSON(jsonData []byte) (message *Message) {
-	json.Unmarshal(jsonData, &message)
+	err := json.Unmarshal(jsonData, &message)
+	if err != nil {
+		log.Println(err.Error())
+	}
 	return message
 }

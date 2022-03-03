@@ -46,15 +46,17 @@ func (r *Room) Run() {
 
 // Client joins the room
 func (r *Room) joinRoom(c *Client) {
-	msg := NewMessage("join-room", fmt.Sprintf("%s has joined the room", c.SteamID), c.SteamID, "").ToJSON()
+	msg := NewMessage("join-room", fmt.Sprintf("%s has joined the room", c.SteamID), c.SteamID, "now").ToJSON()
 	r.broadcastToAll(msg)
+	Hub.forward <- msg // Hub needs to know so it updates the current rooms
 	r.Clients = append(r.Clients, c)
 }
 
 // Client leaves the room
 func (r *Room) leaveRoom(c *Client) {
-	msg := NewMessage("left-room", fmt.Sprintf("%s has left the room", c.SteamID), c.SteamID, "").ToJSON()
+	msg := NewMessage("left-room", fmt.Sprintf("%s has left the room", c.SteamID), c.SteamID, "now").ToJSON()
 	r.broadcastToAll(msg)
+	Hub.forward <- msg
 	c.DeleteFromRoom(r)
 }
 

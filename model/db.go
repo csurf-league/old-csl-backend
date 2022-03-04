@@ -13,6 +13,7 @@ import (
 var db *sqlx.DB
 var err error
 
+// Connects to database
 func Connect() {
 	db, err = sqlx.Open("postgres", connToString())
 	if err != nil {

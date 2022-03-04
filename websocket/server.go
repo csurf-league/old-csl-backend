@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -24,7 +25,6 @@ var upgrader = &websocket.Upgrader{
 
 // /api/rooms - handle the room lobby (aKa hub)
 func HandleHub(w http.ResponseWriter, r *http.Request) {
-	// TODO: change this to bearer auth?
 	steamid := r.URL.Query().Get("steamid")
 	if len(steamid) == 0 {
 		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, "Invalid steamid"))
@@ -40,6 +40,10 @@ func HandleHub(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, "Something went wrong..."))
 		return
+	}
+
+	for _, c := range r.Cookies() {
+		fmt.Println(c)
 	}
 
 	log.Println("Someone connected to /rooms")

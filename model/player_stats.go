@@ -1,5 +1,6 @@
 package model
 
+// PlayerStats represents game data
 type PlayerStats struct {
 	ID             uint64 `json:"id"`
 	Player_SteamID string `json:"player_steamid"`
@@ -24,8 +25,8 @@ type PlayerStats struct {
 	Mvp            int    `json:"mvp"`
 }
 
-func GetPlayerStats(steamID string) (PlayerStats, error) {
-	user := PlayerStats{}
-	err := db.Get(&user, "SELECT * FROM player_stats WHERE player_steamid = $1;", steamID)
-	return user, err
+func CreatePlayer(steamid string) error {
+	query := `INSERT INTO player_stats(player_steamid, map_id) VALUES ($1,1);`
+	_, err = db.Exec(query, steamid)
+	return err
 }

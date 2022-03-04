@@ -11,8 +11,7 @@ import (
 	"github.com/solovev/steam_go"
 )
 
-// GET /api/player/{steamid}
-// Returns {steamid}'s steam data or 404 if not found
+// GET /api/steam/{steamid} - Returns player's steam data from db or 404 if not found
 func GetSteamUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -25,13 +24,13 @@ func GetSteamUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(player)
 }
 
-// Not an API function
+// Not an API function!
 // Called when user logs in with steam
 func CreateSteamUser(user *steam_go.PlayerSummaries) error {
 	return model.CreateSteamUser(utils.PlayerSummariesToSteamUser(user))
 }
 
-// Not an API function
+// Not an API function!
 // Called when we want to update our logged user steam data using his session ID
 // Updates steam data or internal server error if smt bad happened
 func UpdateSteamUser(w http.ResponseWriter, r *http.Request) {

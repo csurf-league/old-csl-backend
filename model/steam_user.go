@@ -4,6 +4,7 @@ import (
 	"log"
 )
 
+// SteamUser represents steam user's relevant data
 type SteamUser struct {
 	ID             uint64 `json:"id"`
 	SteamID        string `json:"steamid"`
@@ -21,12 +22,14 @@ type SteamUser struct {
 	Updated_At     string `json:"updated_at"`
 }
 
-func GetSteamUser(steamID string) (SteamUser, error) {
+// Returns a user from database by steamid
+func GetSteamUser(steamid string) (SteamUser, error) {
 	user := SteamUser{}
-	err := db.Get(&user, "SELECT * FROM steam_user WHERE steamid = $1;", steamID)
+	err := db.Get(&user, "SELECT * FROM steam_user WHERE steamid = $1;", steamid)
 	return user, err
 }
 
+// Creates a new user on the database
 func CreateSteamUser(user SteamUser) error {
 	userExists, err := DoesSteamUserExist(user.SteamID)
 	if err != nil {
@@ -49,9 +52,16 @@ func CreateSteamUser(user SteamUser) error {
 		return err
 	}
 
+	err = CreatePlayer(user.SteamID)
+	if err != nil {
+		log.Printf("Error creating Player @CreateSteamUser: %s\n", err.Error())
+		return err
+	}
+
 	return nil
 }
 
+// Updates user from the database
 func UpdateSteamUser(user SteamUser) error {
 	query := `UPDATE steam_user SET personaname = $1::text, lastlogoff = $2, profileurl = $3::text, 
 		avatar = $4::text, avatarmedium = $5::text, avatarfull = $6::text, realname = $7::text, 
@@ -70,6 +80,7 @@ func UpdateSteamUser(user SteamUser) error {
 	return nil
 }
 
+// Returns true if user by steamid already exists
 func DoesSteamUserExist(steamid string) (bool, error) {
 	var count int
 	err := db.QueryRow("SELECT COUNT(*) FROM steam_user WHERE steamid = '" + steamid + "';").Scan(&count)

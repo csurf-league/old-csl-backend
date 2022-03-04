@@ -9,6 +9,7 @@ import (
 	"github.com/solovev/steam_go"
 )
 
+// ErrorResponse represents a error object which we can send when API fails
 type ErrorResponse struct {
 	Code     int
 	ErrorMsg string

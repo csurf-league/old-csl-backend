@@ -65,7 +65,15 @@ INSERT INTO steam_user(steamid, personaname, lastlogoff, profileurl, avatar, ava
 
 INSERT INTO map(name) VALUES ('xdream');
 
-INSERT INTO player_stats(player_steamid, map_id) VALUES ('76561198226912040',1);
+INSERT INTO player_stats(player_steamid, map_id) VALUES ('1337steamidyes',1);
+
+INSERT INTO player_stats(player_steamid, map_id, kills, deaths, assists, shots, 
+	hits, damage, first_blood, aces, headshots, no_scope, count, playtime, match_win) 
+	VALUES ('76561198226912040', 2, 7, 2, 7, 7, 7, 1, 7, 5, 7, 7, 2, 7, 7);
+INSERT INTO player_stats(player_steamid, map_id, kills, deaths, assists, shots, 
+		hits, damage, first_blood, aces, headshots, no_scope, count, playtime, match_win) 
+		VALUES ('76561198226912040', 3, 1, 2, 3, 6, 17, 1, 72, 5, 17, 7, 12, 0, 7);
+
 `
 
-// TODO: add fkeys (map id, steamid, ..)
+// TODO: add fkey (steamid -> player_steamid ?, ..)

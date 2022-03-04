@@ -7,10 +7,22 @@ import (
 	"github.com/robyzzz/csl-backend/controller"
 )
 
-// Used to update steam user data when acessing a route or to let them log in
+// Used to let client access only routes that need him to be logged in
+func IsAuthenticated(h func(w http.ResponseWriter, r *http.Request)) http.Handler {
+	next := http.HandlerFunc(h)
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			if config.SessionAlreadyExists(r) {
+				next.ServeHTTP(w, r)
+			} else {
+				http.Redirect(w, r, "/404", http.StatusTemporaryRedirect)
+			}
+		})
+}
+
+// Used to update steam user data when acessing /login
 // If user is already logged in, we update, else we redirect to login page
-// Usage: /login
-func IsLogged(h func(w http.ResponseWriter, r *http.Request)) http.Handler {
+func BeforeLogin(h func(w http.ResponseWriter, r *http.Request)) http.Handler {
 	next := http.HandlerFunc(h)
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {

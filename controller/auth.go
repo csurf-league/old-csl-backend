@@ -9,6 +9,7 @@ import (
 	"github.com/solovev/steam_go"
 )
 
+// GET /login - redirect to steam auth and validate user
 func Login(w http.ResponseWriter, r *http.Request) {
 	opId := steam_go.NewOpenId(r)
 
@@ -20,26 +21,27 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, opId.AuthUrl(), http.StatusTemporaryRedirect)
 	default:
 		// login success
-
 		w.Header().Set("Content-Type", "application/json")
 
 		user, err := opId.ValidateAndGetUser(config.STEAM_API_KEY)
 		if err != nil {
-			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, "ValidateAndGetUser:"+err.Error()))
+			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, err.Error()))
 			return
 		}
 
 		if err = CreateSteamUser(user); err != nil {
-			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, "CreateSteamUser:"+err.Error()))
+			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, err.Error()))
 			return
 		}
 
 		config.CreateSessionID(w, r, user.SteamId)
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(user)
+		// TODO: redirect?
 	}
 }
 
+// GET /logout - Log out from current session
 func Logout(w http.ResponseWriter, r *http.Request) {
 	config.RemoveSessionID(w, r)
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)

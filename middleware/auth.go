@@ -1,10 +1,13 @@
 package middleware
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/robyzzz/csl-backend/config"
 	"github.com/robyzzz/csl-backend/controller"
+	"github.com/robyzzz/csl-backend/utils"
 )
 
 // Used to let client access only routes that need him to be logged in
@@ -12,10 +15,15 @@ func IsAuthenticated(h func(w http.ResponseWriter, r *http.Request)) http.Handle
 	next := http.HandlerFunc(h)
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			log.Println("cookies:")
+			for _, cookie := range r.Cookies() {
+				fmt.Println("Found a cookie named:", cookie.Name)
+			}
 			if config.SessionAlreadyExists(r) {
 				next.ServeHTTP(w, r)
 			} else {
-				http.Redirect(w, r, "/404", http.StatusTemporaryRedirect)
+				utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, "Not authenticated"))
 			}
 		})
 }

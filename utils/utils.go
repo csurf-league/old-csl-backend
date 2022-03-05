@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
@@ -22,10 +21,8 @@ func NewAPIError(c int, m string) ErrorResponse {
 
 // Error response in JSON format
 func APIErrorRespond(w http.ResponseWriter, res ErrorResponse) {
-	w.Header().Set("Content-Type", "application/json")
 	log.Printf(res.ErrorMsg)
-	w.WriteHeader(res.Code)
-	json.NewEncoder(w).Encode(res)
+	http.Error(w, res.ErrorMsg, 400)
 }
 
 // Converts PlayerSummaries to SteamUser

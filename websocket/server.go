@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/robyzzz/csl-backend/config"
 	"github.com/robyzzz/csl-backend/utils"
 )
 
@@ -62,19 +63,13 @@ func HandleHub(w http.ResponseWriter, r *http.Request) {
 // /api/room/{room_id} - create a client websocket, putting him in this room
 func (room *Room) HandleRoom(w http.ResponseWriter, r *http.Request) {
 	if room.IsFull() {
-		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusBadRequest, "Room is full"))
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusBadRequest, "Room is full."))
 		return
 	}
 
-	// TODO: change this to bearer auth?
-	steamid := r.URL.Query().Get("steamid")
-	if len(steamid) == 0 {
-		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, "Invalid steamid"))
-		return
-	}
-
+	steamid := config.GetSessionID(r)
 	if AlreadyInAnotherRoom(steamid) {
-		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusBadRequest, "You can only join 1 room"))
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusBadRequest, "You can only join 1 room."))
 		return
 	}
 

@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/robyzzz/csl-backend/config"
@@ -15,15 +13,12 @@ func IsAuthenticated(h func(w http.ResponseWriter, r *http.Request)) http.Handle
 	next := http.HandlerFunc(h)
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-			log.Println("cookies:")
-			for _, cookie := range r.Cookies() {
-				fmt.Println("Found a cookie named:", cookie.Name)
-			}
+			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
 			if config.SessionAlreadyExists(r) {
 				next.ServeHTTP(w, r)
 			} else {
-				utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, "Not authenticated"))
+				utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, "Not authenticated."))
 			}
 		})
 }

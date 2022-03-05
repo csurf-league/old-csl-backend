@@ -64,8 +64,6 @@ func handleHubMessage(msg []byte) {
 	data := FromJSON(msg)
 	var response []byte
 
-	// TODO: find a better way for this type of communication (especially join and left room updates)
-	// possible solution: just send who joined/left and pop him from room players array
 	switch data.Action {
 	// when someone joins/leaves a room, we need to update hub view rooms
 	case "join-room", "left-room":

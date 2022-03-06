@@ -24,7 +24,9 @@ func Connect() {
 		log.Fatalf("Error: Could not ping database: %s\n", err.Error())
 	}
 
-	db.MustExec(schema)
+	db.MustExec(schemaTables)
+	db.MustExec(schemaFk)
+	db.MustExec(schemaTestData)
 	log.Printf("Database connection done successfully: %p\n", db)
 
 	users := []SteamUser{}

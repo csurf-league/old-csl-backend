@@ -2,9 +2,10 @@ package model
 
 // For testing
 
-var schema = `
+var schemaTables = `
 DROP TABLE IF EXISTS steam_user;
 DROP TABLE IF EXISTS player_stats;
+DROP TABLE IF EXISTS map;
 
 CREATE TABLE IF NOT EXISTS "steam_user" (
 	"id" SERIAL PRIMARY KEY,
@@ -51,25 +52,31 @@ CREATE TABLE IF NOT EXISTS "map" (
 	"id" SERIAL PRIMARY KEY, 
 	"name" VARCHAR(64)
 );
+`
 
-
+var schemaFk = `
 ALTER TABLE "player_stats"
     ADD CONSTRAINT fk_map
     FOREIGN KEY (map_id) 
     REFERENCES map (id);
+`
 
+var schemaTestData = `
 
 INSERT INTO steam_user(steamid, personaname, lastlogoff, profileurl, avatar, avatarmedium, 
 	avatarfull, realname, primaryclanid, timecreated, loccountrycode, created_at) 
 	VALUES ('steamid','bozo',123,'kkk','a', 'b', 'c', 'yes', '13', 123, 'dd', NOW());
 
 INSERT INTO map(name) VALUES ('xdream');
+INSERT INTO map(name) VALUES ('ski');
+INSERT INTO map(name) VALUES ('evil');
 
 INSERT INTO player_stats(player_steamid, map_id) VALUES ('1337steamidyes',1);
 
 INSERT INTO player_stats(player_steamid, map_id, kills, deaths, assists, shots, 
 	hits, damage, first_blood, aces, headshots, no_scope, count, playtime, match_win) 
 	VALUES ('76561198226912040', 2, 7, 2, 7, 7, 7, 1, 7, 5, 7, 7, 2, 7, 7);
+
 INSERT INTO player_stats(player_steamid, map_id, kills, deaths, assists, shots, 
 		hits, damage, first_blood, aces, headshots, no_scope, count, playtime, match_win) 
 		VALUES ('76561198226912040', 3, 1, 2, 3, 6, 17, 1, 72, 5, 17, 7, 12, 0, 7);

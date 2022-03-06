@@ -15,3 +15,5 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/jmoiron/sqlx v1.3.4
 )
+
+require github.com/gorilla/securecookie v1.1.1 // indirect

@@ -18,7 +18,7 @@ func IsAuthenticated(h func(w http.ResponseWriter, r *http.Request)) http.Handle
 			if config.SessionAlreadyExists(r) {
 				next.ServeHTTP(w, r)
 			} else {
-				utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, "Not authenticated."))
+				utils.APIErrorRespond(w, utils.NewAPIError(http.StatusUnauthorized, "Not authenticated."))
 			}
 		})
 }

@@ -22,7 +22,7 @@ func NewAPIError(c int, m string) ErrorResponse {
 // Error response in JSON format
 func APIErrorRespond(w http.ResponseWriter, res ErrorResponse) {
 	log.Printf(res.ErrorMsg)
-	http.Error(w, res.ErrorMsg, 400)
+	http.Error(w, res.ErrorMsg, res.Code)
 }
 
 // Converts PlayerSummaries to SteamUser

@@ -34,8 +34,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}
 
 		config.CreateSessionID(w, r, user.SteamId)
-		w.WriteHeader(http.StatusCreated)
-		//json.NewEncoder(w).Encode(user)
 		http.Redirect(w, r, config.FRONTEND_URL, http.StatusTemporaryRedirect)
 	}
 }

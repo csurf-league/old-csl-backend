@@ -11,6 +11,21 @@ import (
 	"github.com/solovev/steam_go"
 )
 
+// GET /profile - Returns player's auth steam data from db or 404 if not found
+func GetProfile(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", config.FRONTEND_URL)
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Content-Type", "application/json")
+
+	player, err := model.GetSteamUser(config.GetSessionID(r))
+	if err != nil {
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, err.Error()))
+		return
+	}
+
+	json.NewEncoder(w).Encode(player)
+}
+
 // GET /api/steam/{steamid} - Returns player's steam data from db or 404 if not found
 func GetSteamUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -35,6 +50,11 @@ func CreateSteamUser(user *steam_go.PlayerSummaries) error {
 // Updates steam data or internal server error if smt bad happened
 func UpdateSteamUser(w http.ResponseWriter, r *http.Request) {
 	steamID := config.GetSessionID(r)
+
+	if steamID == "" {
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, "Invalid session ID."))
+		return
+	}
 
 	exists, err := model.DoesSteamUserExist(steamID)
 	if err != nil {
@@ -61,5 +81,5 @@ func UpdateSteamUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "http://localhost:3000/", http.StatusFound)
+	http.Redirect(w, r, config.FRONTEND_URL, http.StatusTemporaryRedirect)
 }

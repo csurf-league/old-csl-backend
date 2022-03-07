@@ -68,6 +68,11 @@ func (room *Room) HandleRoom(w http.ResponseWriter, r *http.Request) {
 	}
 
 	steamid := config.GetSessionID(r)
+	if steamid == "" {
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, "Invalid session ID."))
+		return
+	}
+
 	if AlreadyInAnotherRoom(steamid) {
 		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusBadRequest, "You can only join 1 room."))
 		return

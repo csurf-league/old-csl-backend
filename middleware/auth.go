@@ -13,7 +13,7 @@ func IsAuthenticated(h func(w http.ResponseWriter, r *http.Request)) http.Handle
 	next := http.HandlerFunc(h)
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+			w.Header().Set("Access-Control-Allow-Origin", config.FRONTEND_URL)
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
 			if config.SessionAlreadyExists(r) {
 				next.ServeHTTP(w, r)

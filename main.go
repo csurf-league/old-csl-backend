@@ -34,13 +34,12 @@ func setupRouter() {
 	router.Handle("/logout", middleware.IsAuthenticated(controller.Logout))
 	router.Handle("/login", middleware.BeforeLogin(controller.Login))
 
-	// steam user
+	// steam_user (steam data)
+	router.Handle("/profile", middleware.IsAuthenticated(controller.GetProfile))
 	router.HandleFunc("/api/steam/{steamid}", controller.GetSteamUser).Methods("GET")
 
-	// user (all data)
-	router.HandleFunc("/api/users", controller.UserIndex).Methods("GET")
-	router.HandleFunc("/api/user/{steamid}", controller.GetUser).Methods("GET")
-	router.Handle("/profile", middleware.IsAuthenticated(controller.Profile)).Methods("GET")
+	// player_stats (game statistics)
+	router.HandleFunc("/api/player/{steamid}", controller.GetPlayer).Methods("GET")
 
 	// hub/lobby
 	websocket.Hub = websocket.NewHub()

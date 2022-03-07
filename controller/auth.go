@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/robyzzz/csl-backend/config"
@@ -25,7 +24,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 		user, err := opId.ValidateAndGetUser(config.STEAM_API_KEY)
 		if err != nil {
-			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, err.Error()))
+			utils.APIErrorRespond(w, utils.NewAPIError(http.StatusInternalServerError, "ValidateAndGetUser: "+err.Error()))
 			return
 		}
 
@@ -36,8 +35,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 		config.CreateSessionID(w, r, user.SteamId)
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(user)
-		// TODO: redirect?
+		//json.NewEncoder(w).Encode(user)
+		http.Redirect(w, r, config.FRONTEND_URL, http.StatusTemporaryRedirect)
 	}
 }
 

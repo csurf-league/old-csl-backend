@@ -11,6 +11,7 @@ var SESSION_SECRET_KEY string
 var SESSION_NAME string
 var STEAM_API_KEY string
 var PORT string
+var FRONTEND_URL string
 
 var POSTGRES_URL string
 var POSTGRES_PORT string
@@ -28,6 +29,7 @@ func GetEnvVariables() {
 	SESSION_NAME = os.Getenv("SESSION_NAME")
 	STEAM_API_KEY = os.Getenv("STEAM_API_KEY")
 	PORT = os.Getenv("PORT")
+	FRONTEND_URL = os.Getenv("FRONTEND_URL")
 
 	POSTGRES_URL = os.Getenv("POSTGRES_URL")
 	POSTGRES_PORT = os.Getenv("POSTGRES_PORT")

@@ -52,7 +52,7 @@ func CreateSteamUser(user SteamUser) error {
 		return err
 	}
 
-	err = CreatePlayer(user.SteamID)
+	err = CreateDefaultPlayer(user.SteamID)
 	if err != nil {
 		log.Printf("Error creating Player @CreateSteamUser: %s\n", err.Error())
 		return err

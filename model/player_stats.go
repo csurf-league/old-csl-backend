@@ -25,7 +25,16 @@ type PlayerStats struct {
 	Mvp            int    `json:"mvp"`
 }
 
-func CreatePlayer(steamid string) error {
+// Find player by steamid.
+func GetPlayer(steamid string) (PlayerStats, error) {
+	user := PlayerStats{}
+	err := db.Get(&user, "SELECT * FROM player_stats WHERE player_steamid = $1;", steamid)
+	return user, err
+}
+
+// Creates 1 record on player_stats.
+// Useful for creating the user when he logs in for the first time.
+func CreateDefaultPlayer(steamid string) error {
 	query := `INSERT INTO player_stats(player_steamid, map_id) VALUES ($1,1);`
 	_, err = db.Exec(query, steamid)
 	return err

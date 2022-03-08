@@ -81,5 +81,5 @@ func UpdateSteamUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, config.FRONTEND_URL, http.StatusTemporaryRedirect)
+	// http.Redirect(w, r, config.FRONTEND_URL, http.StatusTemporaryRedirect)
 }

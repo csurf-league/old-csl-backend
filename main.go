@@ -31,8 +31,9 @@ func setupRouter() {
 	router.HandleFunc("/", controller.Home)
 
 	// auth
-	router.Handle("/logout", middleware.IsAuthenticated(controller.Logout))
-	router.Handle("/login", middleware.BeforeLogin(controller.Login))
+	router.HandleFunc("/login",  controller.Login).Methods("GET")
+	router.HandleFunc("/logout", controller.Logout).Methods("GET")
+	router.Handle("/auth", 		 middleware.BeforeAuth(controller.Auth)).Methods("PUT", "OPTIONS");
 
 	// steam_user (steam data)
 	router.Handle("/profile", middleware.IsAuthenticated(controller.GetProfile))

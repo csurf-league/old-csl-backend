@@ -22,6 +22,13 @@ type SteamUser struct {
 	Updated_At     string `json:"updated_at"`
 }
 
+// Returns all users from database
+func GetAllSteamUsers() ([]SteamUser, error) {
+	users := []SteamUser{}
+	err := db.Select(&users, "SELECT * FROM steam_user;")
+	return users, err
+}
+
 // Returns a user from database by steamid
 func GetSteamUser(steamid string) (SteamUser, error) {
 	user := SteamUser{}

@@ -25,11 +25,18 @@ type PlayerStats struct {
 	Mvp            int    `json:"mvp"`
 }
 
+// Get all players.
+func GetAllPlayers() ([]PlayerStats, error) {
+	players := []PlayerStats{}
+	err := db.Select(&players, "SELECT * FROM player_stats;")
+	return players, err
+}
+
 // Find player by steamid.
 func GetPlayer(steamid string) (PlayerStats, error) {
-	user := PlayerStats{}
-	err := db.Get(&user, "SELECT * FROM player_stats WHERE player_steamid = $1;", steamid)
-	return user, err
+	player := PlayerStats{}
+	err := db.Get(&player, "SELECT * FROM player_stats WHERE player_steamid = $1;", steamid)
+	return player, err
 }
 
 // Creates 1 record on player_stats.

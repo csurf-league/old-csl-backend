@@ -26,6 +26,19 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(player)
 }
 
+// GET /api/steam - Returns all steam users from db
+func GetAllSteamUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	users, err := model.GetAllSteamUsers()
+	if err != nil {
+		utils.APIErrorRespond(w, utils.NewAPIError(http.StatusNotFound, err.Error()))
+		return
+	}
+
+	json.NewEncoder(w).Encode(users)
+}
+
 // GET /api/steam/{steamid} - Returns player's steam data from db or 404 if not found
 func GetSteamUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
